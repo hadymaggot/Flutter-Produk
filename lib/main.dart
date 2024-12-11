@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:myapp/halaman_produk.dart';
+import 'package:myapp/features/products/fetch.dart';
 
 void main() {
   runApp(const Quiz2());
@@ -53,7 +53,7 @@ class _LoadingPageState extends State<LoadingPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/images/ahadizapto.png',
+                  'lib/assets/images/ahadizapto.png',
                   width: 200,
                 ),
                 const SizedBox(height: 20),

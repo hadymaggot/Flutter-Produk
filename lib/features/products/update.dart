@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:myapp/config/api_config.dart';
-import 'package:myapp/halaman_produk.dart';
+import 'package:myapp/core/constants/api_config.dart';
+import 'package:myapp/features/products/fetch.dart';
 
 class UbahProduk extends StatefulWidget {
   final Map listdata;
