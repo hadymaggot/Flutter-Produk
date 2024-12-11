@@ -1,9 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:myapp/config/api_config.dart';
 import 'package:myapp/halaman_produk.dart';
 
 class UbahProduk extends StatefulWidget {
@@ -25,16 +26,18 @@ class _UbahProdukState extends State<UbahProduk> {
     super.initState();
     id.text = widget.listdata['id'];
     name.text = widget.listdata['name'];
-    price.text = _formatPrice(double.parse(widget.listdata['price'].toString()));
+    price.text =
+        _formatPrice(double.parse(widget.listdata['price'].toString()));
   }
 
-  /// Format the price as a currency string
+  
   String _formatPrice(double value) {
-    return NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+    return NumberFormat.currency(
+            locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
         .format(value);
   }
 
-  /// Create a currency input formatter
+  
   TextInputFormatter _currencyFormatter() {
     return TextInputFormatter.withFunction((oldValue, newValue) {
       String newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
@@ -56,12 +59,13 @@ class _UbahProdukState extends State<UbahProduk> {
     });
   }
 
-  /// Save data to the backend
+  
   Future<bool> _simpanData() async {
-    final priceValue = price.text.replaceAll(RegExp(r'[^0-9]'), ''); // Remove formatting
+    final priceValue =
+        price.text.replaceAll(RegExp(r'[^0-9]'), ''); 
 
     final respon = await http.post(
-      Uri.parse('https://9hs.my.id/unsia/api_produk/update.php'),
+      Uri.parse('${ApiConfig.baseUrl}update.php'),
       body: {
         'id': id.text,
         'name': name.text,
@@ -119,17 +123,20 @@ class _UbahProdukState extends State<UbahProduk> {
                   if (formKey.currentState!.validate()) {
                     _simpanData().then((value) {
                       if (value) {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Data Berhasil Diubah')),
                         );
 
                         Navigator.pushAndRemoveUntil(
+                          // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
                               builder: ((context) => HalamanProduk())),
                           (route) => false,
                         );
                       } else {
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Gagal Mengubah Data')),
                         );

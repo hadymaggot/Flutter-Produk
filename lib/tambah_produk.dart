@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:myapp/config/api_config.dart';
 import 'package:myapp/halaman_produk.dart';
 
 class TambahProduk extends StatefulWidget {
@@ -41,13 +42,12 @@ class _TambahProdukState extends State<TambahProduk> {
     });
   }
 
-  Future<bool> _simpanData() async {
-    final respon = await http.post(
-        Uri.parse('https://9hs.my.id/unsia/api_produk/create.php'),
-        body: {
-          'name': name.text,
-          'price': price.text.replaceAll(RegExp(r'[^0-9]'), ''),
-        });
+  Future<bool> _fetch() async {
+    final respon =
+        await http.post(Uri.parse('${ApiConfig.baseUrl}create.php'), body: {
+      'name': name.text,
+      'price': price.text.replaceAll(RegExp(r'[^0-9]'), ''),
+    });
 
     if (respon.statusCode == 200) {
       return true;
@@ -101,7 +101,7 @@ class _TambahProdukState extends State<TambahProduk> {
                 ElevatedButton(
                   onPressed: () {
                     if (formKey.currentState!.validate()) {
-                      _simpanData().then((value) {
+                      _fetch().then((value) {
                         if (value) {
                           final snackBar =
                               SnackBar(content: Text('Data Berhasil Disimpan'));

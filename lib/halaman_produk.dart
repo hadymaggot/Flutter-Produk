@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:myapp/config/api_config.dart';
 import 'package:myapp/detail_produk.dart';
 import 'package:myapp/edit_produk.dart';
 import 'package:myapp/tambah_produk.dart';
@@ -24,10 +25,9 @@ class _HalamanProdukState extends State<HalamanProduk> {
   final TextEditingController _filterController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  Future _getdata() async {
+  Future _fetch() async {
     try {
-      final respon = await http
-          .get(Uri.parse('https://9hs.my.id/unsia/api_produk/read.php'));
+      final respon = await http.get(Uri.parse('${ApiConfig.baseUrl}read.php'));
       if (respon.statusCode == 200) {
         final data = jsonDecode(respon.body);
         setState(() {
@@ -46,10 +46,10 @@ class _HalamanProdukState extends State<HalamanProduk> {
     }
   }
 
-  Future _deletedata(String id) async {
+  Future _delete(String id) async {
     try {
       final respon = await http.post(
-          Uri.parse('https://9hs.my.id/unsia/api_produk/delete.php'),
+          Uri.parse('${ApiConfig.baseUrl}delete.php'),
           body: {
             "id": id,
           });
@@ -82,7 +82,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
   @override
   void initState() {
     super.initState();
-    _getdata();
+    _fetch();
     _filterController.addListener(() {
       _filterList(_filterController.text);
     });
@@ -113,7 +113,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               setState(() {
-                _getdata();
+                _fetch();
               });
             },
           ),
@@ -253,13 +253,12 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                   actions: [
                                                     ElevatedButton(
                                                       onPressed: () {
-                                                        _deletedata(
-                                                                product['id'])
+                                                        _delete(product['id'])
                                                             .then((value) {
                                                           Navigator.pop(
                                                               context);
                                                           setState(() {
-                                                            _getdata();
+                                                            _fetch();
                                                           });
 
                                                           ScaffoldMessenger.of(
@@ -415,7 +414,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
             ),
             ListTile(
               leading: const Icon(Icons.home),
-              title: const Text('Home'),
+              title: const Text('Product'),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
