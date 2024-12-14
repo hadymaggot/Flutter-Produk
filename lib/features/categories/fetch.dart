@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/core/constants/api_config.dart';
 import 'package:myapp/features/categories/show.dart';
-import 'package:myapp/features/products/store.dart';
+import 'package:myapp/features/categories/store.dart';
+import 'package:myapp/features/categories/update.dart';
 import 'package:myapp/features/products/update.dart';
 import 'package:myapp/widgets/filter_widget.dart';
 import 'package:myapp/widgets/menu_widget.dart';
@@ -117,7 +118,7 @@ class _CategoriesState extends State<Categories> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => TambahProduk(),
+                  builder: (context) => TambahKategori(),
                 ),
               );
             },
@@ -177,7 +178,7 @@ class _CategoriesState extends State<Categories> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      UbahProduk(
+                                                      UbahKategori(
                                                     listdata: {
                                                       'id': product['id'],
                                                       'name': product['name'],

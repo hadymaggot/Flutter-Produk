@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,9 +45,9 @@ class _TambahProdukState extends State<TambahProduk> {
         final data = jsonDecode(response.body);
         setState(() {
           _categories = List<Map<String, dynamic>>.from(data['data']);
-          if (_categories.isNotEmpty) {
-            _selectedCategory = _categories[0]['id'];
-          }
+          // if (_categories.isEmpty) {
+          //   _selectedCategory = '-';
+          // }
           _loading = false;
         });
       } else {
@@ -100,8 +100,7 @@ class _TambahProdukState extends State<TambahProduk> {
 
       request.fields['name'] = _name.text;
       request.fields['price'] = _price.text.replaceAll(RegExp(r'[^0-9]'), '');
-      request.fields['id_kategori'] =
-          _selectedCategory ?? ''; // Send the selected category ID
+      request.fields['id_kategori'] = _selectedCategory ?? '';
 
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -113,10 +112,14 @@ class _TambahProdukState extends State<TambahProduk> {
       );
 
       final response = await request.send();
+      final responseBody = await http.Response.fromStream(response);
       if (response.statusCode == 200) {
         return true;
       } else {
-        throw Exception('Failed to submit data: ${response.reasonPhrase}');
+        if (kDebugMode) {
+          print('Error uploading image: ${responseBody.body}');
+        }
+        throw Exception('Failed to submit data: ${responseBody.body}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
