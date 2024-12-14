@@ -59,7 +59,7 @@ class _UbahProdukState extends State<UbahProduk> {
     final priceValue = price.text.replaceAll(RegExp(r'[^0-9]'), '');
 
     final respon = await http.post(
-      Uri.parse('${ApiConfig.baseUrl}update.php'),
+      Uri.parse('${ApiConfig.baseUrl}products/update.php'),
       body: {
         'id': id.text,
         'name': name.text,
