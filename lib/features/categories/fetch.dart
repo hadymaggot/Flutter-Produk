@@ -41,6 +41,7 @@ class _CategoriesState extends State<Categories> {
       setState(() {
         _loading = false;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch data: $e')),
       );
@@ -65,6 +66,7 @@ class _CategoriesState extends State<Categories> {
       setState(() {
         _loading = false;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch data: $e')),
       );
@@ -200,12 +202,14 @@ class _CategoriesState extends State<Categories> {
                                                           _delete(product['id'])
                                                               .then((value) {
                                                             Navigator.pop(
+                                                                // ignore: use_build_context_synchronously
                                                                 context);
                                                             setState(() {
                                                               _fetch();
                                                             });
 
                                                             ScaffoldMessenger
+                                                                    // ignore: use_build_context_synchronously
                                                                     .of(context)
                                                                 .showSnackBar(
                                                               SnackBar(
@@ -218,9 +222,11 @@ class _CategoriesState extends State<Categories> {
                                                           }).catchError(
                                                                   (error) {
                                                             Navigator.pop(
+                                                                // ignore: use_build_context_synchronously
                                                                 context);
 
                                                             ScaffoldMessenger
+                                                                    // ignore: use_build_context_synchronously
                                                                     .of(context)
                                                                 .showSnackBar(
                                                               SnackBar(

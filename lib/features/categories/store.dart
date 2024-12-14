@@ -41,6 +41,7 @@ class _TambahKategoriState extends State<TambahKategori> {
         throw Exception('Gagal menyimpan data: ${response.body}');
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -86,8 +87,10 @@ class _TambahKategoriState extends State<TambahKategori> {
                     });
 
                     if (success) {
+                      // ignore: use_build_context_synchronously
                       Navigator.pop(context, true); // Indicate success to the Categories screen
                     } else {
+                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Gagal Menyimpan Kategori')),
                       );
