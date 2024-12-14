@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +5,6 @@ import 'package:myapp/core/constants/api_config.dart';
 import 'package:myapp/features/categories/show.dart';
 import 'package:myapp/features/categories/store.dart';
 import 'package:myapp/features/categories/update.dart';
-import 'package:myapp/features/products/update.dart';
 import 'package:myapp/widgets/filter_widget.dart';
 import 'package:myapp/widgets/menu_widget.dart';
 import 'package:myapp/widgets/refresh_widget.dart';
@@ -108,19 +105,21 @@ class _CategoriesState extends State<Categories> {
             Text('Halaman Kategori'),
           ],
         ),
-        // ignore: deprecated_member_use
-        backgroundColor: Colors.orange.withValues(alpha: 0.7),
+        backgroundColor: Colors.orange.withAlpha(180),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => TambahKategori(),
                 ),
               );
+              if (result == true) {
+                _fetch(); // Refresh the data after adding a category
+              }
             },
           ),
           const SizedBox(width: 8),
@@ -237,9 +236,8 @@ class _CategoriesState extends State<Categories> {
                                                             .styleFrom(
                                                           backgroundColor:
                                                               Colors.orange
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.7),
+                                                                  .withAlpha(
+                                                                      180),
                                                           foregroundColor:
                                                               Colors.white,
                                                           textStyle:

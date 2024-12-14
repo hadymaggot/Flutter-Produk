@@ -1,4 +1,3 @@
-// import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,16 +11,14 @@ class TambahKategori extends StatefulWidget {
 }
 
 class _TambahKategoriState extends State<TambahKategori> {
-  final _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
   bool _loading = false;
 
   Future<bool> _submitData() async {
     if (_name.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Please provide a name for the category!')),
+        const SnackBar(content: Text('Nama Kategori harus diisi!')),
       );
       return false;
     }
@@ -39,16 +36,13 @@ class _TambahKategoriState extends State<TambahKategori> {
         return true;
       } else {
         if (kDebugMode) {
-          if (kDebugMode) {
-            print('Error submitting data: ${response.body}');
-          }
+          print('Error: ${response.body}');
         }
-        throw Exception('Failed to submit data: ${response.body}');
+        throw Exception('Gagal menyimpan data: ${response.body}');
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error submitting data: $e')),
+        SnackBar(content: Text('Error: $e')),
       );
       return false;
     }
@@ -76,8 +70,7 @@ class _TambahKategoriState extends State<TambahKategori> {
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nama Kategori Tidak Boleh Kosong!' : null,
+                validator: (value) => value!.isEmpty ? 'Nama Kategori Tidak Boleh Kosong!' : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -93,18 +86,10 @@ class _TambahKategoriState extends State<TambahKategori> {
                     });
 
                     if (success) {
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Kategori Berhasil Disimpan')),
-                      );
-                      // ignore: use_build_context_synchronously
-                      Navigator.pop(context);
+                      Navigator.pop(context, true); // Indicate success to the Categories screen
                     } else {
-                      // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Gagal Menyimpan Kategori')),
+                        const SnackBar(content: Text('Gagal Menyimpan Kategori')),
                       );
                     }
                   }
@@ -114,10 +99,8 @@ class _TambahKategoriState extends State<TambahKategori> {
                   foregroundColor: Colors.white,
                 ),
                 child: _loading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : const Text('Simpan'),
+                    ? const CircularProgressIndicator()
+                    : const Text('Simpan Kategori'),
               ),
             ],
           ),
