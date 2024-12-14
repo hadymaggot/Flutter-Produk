@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -30,14 +28,12 @@ class _UbahProdukState extends State<UbahProduk> {
         _formatPrice(double.parse(widget.listdata['price'].toString()));
   }
 
-  
   String _formatPrice(double value) {
     return NumberFormat.currency(
             locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
         .format(value);
   }
 
-  
   TextInputFormatter _currencyFormatter() {
     return TextInputFormatter.withFunction((oldValue, newValue) {
       String newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
@@ -59,10 +55,8 @@ class _UbahProdukState extends State<UbahProduk> {
     });
   }
 
-  
   Future<bool> _simpanData() async {
-    final priceValue =
-        price.text.replaceAll(RegExp(r'[^0-9]'), ''); 
+    final priceValue = price.text.replaceAll(RegExp(r'[^0-9]'), '');
 
     final respon = await http.post(
       Uri.parse('${ApiConfig.baseUrl}update.php'),
@@ -81,7 +75,7 @@ class _UbahProdukState extends State<UbahProduk> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ubah Produk'),
-        backgroundColor: Colors.orange.withOpacity(0.7),
+        backgroundColor: Colors.orange.withValues(alpha: 0.7),
         foregroundColor: Colors.white,
       ),
       body: Form(
@@ -145,7 +139,7 @@ class _UbahProdukState extends State<UbahProduk> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange.withOpacity(0.7),
+                  backgroundColor: Colors.orange.withValues(alpha: 0.7),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Ubah'),

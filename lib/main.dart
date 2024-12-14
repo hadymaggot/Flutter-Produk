@@ -53,7 +53,7 @@ class _LoadingPageState extends State<LoadingPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'lib/assets/images/ahadizapto.png',
+                  'assets/images/ahadizapto.png',
                   width: 200,
                 ),
                 const SizedBox(height: 20),

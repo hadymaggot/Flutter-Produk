@@ -12,7 +12,7 @@ class HamburgerMenu extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.7),
+              color: Colors.orange.withValues(alpha: 0.7),
             ),
             child: Stack(
               children: [
@@ -47,8 +47,7 @@ class HamburgerMenu extends StatelessWidget {
             onTap: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const HalamanProduk()),
+                MaterialPageRoute(builder: (context) => const HalamanProduk()),
               );
             },
           ),

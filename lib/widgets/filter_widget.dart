@@ -18,7 +18,7 @@ class FilterWidget extends StatelessWidget {
         controller: filterController,
         onChanged: onFilter,
         decoration: InputDecoration(
-          labelText: 'Filter products',
+          labelText: 'Cari...',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
           ),

@@ -14,6 +14,7 @@ class _DetailProdukState extends State<DetailProduk> {
   TextEditingController id = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController price = TextEditingController();
+  TextEditingController nmKategori = TextEditingController();
 
   String formatPrice(String value) {
     double priceValue = double.tryParse(value) ?? 0;
@@ -32,10 +33,11 @@ class _DetailProdukState extends State<DetailProduk> {
     id.text = widget.listdata['id'];
     name.text = widget.listdata['name'];
     price.text = formatPrice(widget.listdata['price']);
+    nmKategori.text = widget.listdata['nmKategori'] ?? '-';
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange.withOpacity(0.7),
+        backgroundColor: Colors.orange.withValues(alpha: 0.7),
         foregroundColor: Colors.white,
         title: const Text('Detail Produk'),
       ),
@@ -76,7 +78,16 @@ class _DetailProdukState extends State<DetailProduk> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  initialValue: widget.listdata['last_update'],
+                  initialValue: nmKategori.text,
+                  readOnly: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Kategori',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  initialValue: widget.listdata['updated_at'],
                   readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Tanggal Update',
@@ -90,7 +101,7 @@ class _DetailProdukState extends State<DetailProduk> {
                     borderRadius: BorderRadius.circular(6.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
+                        color: Colors.grey.withValues(alpha: 0.5),
                         spreadRadius: 2,
                         blurRadius: 5,
                         offset: const Offset(0, 3),
@@ -110,14 +121,14 @@ class _DetailProdukState extends State<DetailProduk> {
                           children: [
                             Icon(
                               Icons.nearby_error_sharp,
-                              color: Colors.blueGrey.withOpacity(0.3),
+                              color: Colors.blueGrey.withValues(alpha: 0.3),
                               size: 50.0,
                             ),
                             SizedBox(height: 8.0),
                             Text(
                               'No Image',
                               style: TextStyle(
-                                color: Colors.blueGrey.withOpacity(0.3),
+                                color: Colors.blueGrey.withValues(alpha: 0.3),
                               ),
                             ),
                           ],

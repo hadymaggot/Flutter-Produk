@@ -29,7 +29,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
   Future<void> _fetch() async {
     try {
       final response =
-          await http.get(Uri.parse('${ApiConfig.baseUrl}read.php'));
+          await http.get(Uri.parse('${ApiConfig.baseUrl}products/read.php'));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
@@ -53,7 +53,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
   Future _delete(String id) async {
     try {
       final respon =
-          await http.post(Uri.parse('${ApiConfig.baseUrl}delete.php'), body: {
+          await http.post(Uri.parse('${ApiConfig.baseUrl}products/delete.php'), body: {
         "id": id,
       });
       if (respon.statusCode == 200) {
@@ -108,7 +108,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
             Text('Halaman Produk'),
           ],
         ),
-        backgroundColor: Colors.orange.withOpacity(0.7),
+        backgroundColor: Colors.orange.withValues(alpha: 0.7),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -154,10 +154,12 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                             'id': product['id'] ?? '-',
                                             'name': product['name'] ?? '-',
                                             'price': product['price'] ?? '-',
-                                            'last_update':
-                                                product['last_update'] ?? '-',
+                                            'nmKategori':
+                                                product['nm_kategori'] ?? '-',
                                             'image_urls':
                                                 product['image_urls'] ?? '-',
+                                            'updated_at':
+                                                product['updated_at'] ?? '-',
                                           },
                                         ),
                                       ),
@@ -165,19 +167,19 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                   }
                                 },
                                 child: ListTile(
-                                  leading: product['image_urls']?.isNotEmpty ==
-                                          true
-                                      ? Image.network(
-                                          product['image_urls'],
-                                          height: 40,
-                                          width: 70,
-                                        )
-                                      : Icon(
-                                          Icons.nearby_error_sharp,
-                                          size: 40,
-                                          color:
-                                              Colors.blueGrey.withOpacity(0.3),
-                                        ),
+                                  leading:
+                                      product['image_urls']?.isNotEmpty == true
+                                          ? Image.network(
+                                              product['image_urls'],
+                                              height: 40,
+                                              width: 70,
+                                            )
+                                          : Icon(
+                                              Icons.nearby_error_sharp,
+                                              size: 40,
+                                              color: Colors.blueGrey
+                                                  .withValues(alpha: 0.3),
+                                            ),
                                   title: Text(product['name'] ?? '-'),
                                   subtitle: Text(
                                     product['price'] != null
@@ -197,12 +199,12 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
-                                            color:
-                                                Colors.orange.withOpacity(0.7),
+                                            color: Colors.orange
+                                                .withValues(alpha: 0.7),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.grey
-                                                    .withOpacity(0.2),
+                                                    .withValues(alpha: 0.2),
                                                 spreadRadius: 2,
                                                 blurRadius: 5,
                                                 offset: const Offset(0, 1),
@@ -291,8 +293,9 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                             .styleFrom(
                                                           backgroundColor:
                                                               Colors.orange
-                                                                  .withOpacity(
-                                                                      0.7),
+                                                                  .withValues(
+                                                                      alpha:
+                                                                          0.7),
                                                           foregroundColor:
                                                               Colors.white,
                                                           textStyle:
