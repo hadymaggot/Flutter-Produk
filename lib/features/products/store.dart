@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:myapp/core/constants/api_config.dart';
+import 'package:http_parser/http_parser.dart';
 
 class TambahProduk extends StatefulWidget {
   const TambahProduk({super.key});
@@ -25,6 +26,8 @@ class _TambahProdukState extends State<TambahProduk> {
 
   String? _selectedCategory;
   File? _selectedImage;
+  Uint8List? _selectedImageBytes;
+  String? _selectedImageName;
   List<Map<String, dynamic>> _categories = [];
   bool _loading = true;
 
@@ -42,6 +45,9 @@ class _TambahProdukState extends State<TambahProduk> {
         final data = jsonDecode(response.body);
         setState(() {
           _categories = List<Map<String, dynamic>>.from(data['data']);
+          if (_categories.isNotEmpty) {
+            _selectedCategory = _categories[0]['id'];
+          }
           _loading = false;
         });
       } else {
@@ -61,9 +67,17 @@ class _TambahProdukState extends State<TambahProduk> {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        setState(() {
-          _selectedImage = File(pickedFile.path);
-        });
+        if (kIsWeb) {
+          final bytes = await pickedFile.readAsBytes();
+          setState(() {
+            _selectedImageBytes = bytes;
+            _selectedImageName = pickedFile.name;
+          });
+        } else {
+          setState(() {
+            _selectedImage = File(pickedFile.path);
+          });
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,7 +87,7 @@ class _TambahProdukState extends State<TambahProduk> {
   }
 
   Future<bool> _submitData() async {
-    if (_selectedCategory == null || _selectedImage == null) {
+    if (_selectedCategory == null || _selectedImageBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete all fields!')),
       );
@@ -81,20 +95,29 @@ class _TambahProdukState extends State<TambahProduk> {
     }
 
     try {
-      final request = http.MultipartRequest(
-          'POST', Uri.parse('${ApiConfig.baseUrl}create.php'));
+      final uri = Uri.parse('${ApiConfig.baseUrl}products/create.php');
+      final request = http.MultipartRequest('POST', uri);
+
       request.fields['name'] = _name.text;
       request.fields['price'] = _price.text.replaceAll(RegExp(r'[^0-9]'), '');
-      request.fields['category'] = _selectedCategory ?? '';
+      request.fields['id_kategori'] =
+          _selectedCategory ?? ''; // Send the selected category ID
 
-      if (_selectedImage != null) {
-        request.files.add(
-          await http.MultipartFile.fromPath('photo', _selectedImage!.path),
-        );
-      }
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'photo',
+          _selectedImageBytes!,
+          filename: _selectedImageName ?? 'uploaded_image.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
 
       final response = await request.send();
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to submit data: ${response.reasonPhrase}');
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error submitting data: $e')),
@@ -134,13 +157,12 @@ class _TambahProdukState extends State<TambahProduk> {
           borderRadius: BorderRadius.circular(12),
           color: Colors.grey[200],
         ),
-        child: _selectedImage != null
+        child: _selectedImage != null || _selectedImageBytes != null
             ? ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: kIsWeb
-                    // Use Image.network for web
-                    ? Image.network(
-                        _selectedImage!.path,
+                    ? Image.memory(
+                        _selectedImageBytes!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                       )
@@ -176,7 +198,7 @@ class _TambahProdukState extends State<TambahProduk> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tambah Produk'),
-        backgroundColor: Colors.orange.withValues(alpha: 0.7),
+        backgroundColor: Colors.orange.withAlpha(180),
         foregroundColor: Colors.white,
       ),
       body: _loading
