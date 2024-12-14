@@ -50,27 +50,29 @@ class _HalamanProdukState extends State<HalamanProduk> {
     }
   }
 
-  Future _delete(String id) async {
+  Future<bool> _delete(String id) async {
+    setState(() {
+      _loading = true;
+    });
     try {
-      final respon =
-          await http.post(Uri.parse('${ApiConfig.baseUrl}products/delete.php'), body: {
-        "id": id,
-      });
-      if (respon.statusCode == 200) {
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}products/delete.php'),
+        body: {"id": id},
+      );
+      if (response.statusCode == 200) {
         return true;
       } else {
-        setState(() {
-          _loading = false;
-        });
         return false;
       }
     } catch (e) {
-      setState(() {
-        _loading = false;
-      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch data: $e')),
       );
+      return false;
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -116,10 +118,10 @@ class _HalamanProdukState extends State<HalamanProduk> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => TambahProduk(),
-                ),
-              );
+                MaterialPageRoute(builder: (context) => const TambahProduk()),
+              ).then((_) {
+                _fetch(); // refresh data setelah berhasil input data
+              });
             },
           ),
           const SizedBox(width: 8),

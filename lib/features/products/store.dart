@@ -63,31 +63,8 @@ class _TambahProdukState extends State<TambahProduk> {
     }
   }
 
-  Future<void> _pickImage() async {
-    try {
-      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        if (kIsWeb) {
-          final bytes = await pickedFile.readAsBytes();
-          setState(() {
-            _selectedImageBytes = bytes;
-            _selectedImageName = pickedFile.name;
-          });
-        } else {
-          setState(() {
-            _selectedImage = File(pickedFile.path);
-          });
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking image: $e')),
-      );
-    }
-  }
-
   Future<bool> _submitData() async {
-    if (_selectedCategory == null || _selectedImageBytes == null) {
+    if (_selectedCategory == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete all fields!')),
       );
@@ -102,22 +79,25 @@ class _TambahProdukState extends State<TambahProduk> {
       request.fields['price'] = _price.text.replaceAll(RegExp(r'[^0-9]'), '');
       request.fields['id_kategori'] = _selectedCategory ?? '';
 
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'photo',
-          _selectedImageBytes!,
-          filename: _selectedImageName ?? 'uploaded_image.jpg',
-          contentType: MediaType('image', 'jpeg'),
-        ),
-      );
+      if (_selectedImageBytes != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'photo',
+            _selectedImageBytes!,
+            filename: _selectedImageName ?? 'uploaded_image.jpg',
+            contentType: MediaType('image', 'jpeg'),
+          ),
+        );
+      }
 
       final response = await request.send();
       final responseBody = await http.Response.fromStream(response);
+
       if (response.statusCode == 200) {
         return true;
       } else {
         if (kDebugMode) {
-          print('Error uploading image: ${responseBody.body}');
+          print('Error uploading data: ${responseBody.body}');
         }
         throw Exception('Failed to submit data: ${responseBody.body}');
       }
@@ -194,6 +174,29 @@ class _TambahProdukState extends State<TambahProduk> {
               ),
       ),
     );
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        if (kIsWeb) {
+          final bytes = await pickedFile.readAsBytes();
+          setState(() {
+            _selectedImageBytes = bytes;
+            _selectedImageName = pickedFile.name;
+          });
+        } else {
+          setState(() {
+            _selectedImage = File(pickedFile.path);
+          });
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $e')),
+      );
+    }
   }
 
   @override
