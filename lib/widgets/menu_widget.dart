@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/features/categories/fetch.dart';
-import 'package:myapp/features/products/fetch.dart';
+import 'package:saptohadi/features/categories/fetch.dart';
+import 'package:saptohadi/features/products/fetch.dart';
 
 class HamburgerMenu extends StatelessWidget {
   const HamburgerMenu({super.key});

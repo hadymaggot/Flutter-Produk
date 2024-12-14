@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/core/constants/api_config.dart';
-import 'package:myapp/features/categories/fetch.dart';
+import 'package:saptohadi/core/constants/api_config.dart';
+import 'package:saptohadi/features/categories/fetch.dart';
 
 class UbahKategori extends StatefulWidget {
   final Map listdata;

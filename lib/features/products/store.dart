@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:myapp/core/constants/api_config.dart';
+import 'package:saptohadi/core/constants/api_config.dart';
 import 'package:http_parser/http_parser.dart';
 
 class TambahProduk extends StatefulWidget {

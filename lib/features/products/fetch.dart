@@ -4,13 +4,13 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/core/constants/api_config.dart';
-import 'package:myapp/features/products/show.dart';
-import 'package:myapp/features/products/store.dart';
-import 'package:myapp/features/products/update.dart';
-import 'package:myapp/widgets/filter_widget.dart';
-import 'package:myapp/widgets/menu_widget.dart';
-import 'package:myapp/widgets/refresh_widget.dart';
+import 'package:saptohadi/core/constants/api_config.dart';
+import 'package:saptohadi/features/products/show.dart';
+import 'package:saptohadi/features/products/store.dart';
+import 'package:saptohadi/features/products/update.dart';
+import 'package:saptohadi/widgets/filter_widget.dart';
+import 'package:saptohadi/widgets/menu_widget.dart';
+import 'package:saptohadi/widgets/refresh_widget.dart';
 
 class HalamanProduk extends StatefulWidget {
   const HalamanProduk({super.key});

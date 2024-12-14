@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:myapp/features/products/fetch.dart';
+import 'package:saptohadi/features/products/fetch.dart';
 
 void main() {
   runApp(const Quiz2());

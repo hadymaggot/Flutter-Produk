@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myapp/core/constants/api_config.dart';
+import 'package:saptohadi/core/constants/api_config.dart';
 
 class TambahKategori extends StatefulWidget {
   const TambahKategori({super.key});
