@@ -14,6 +14,7 @@ class _DetailProdukState extends State<DetailProduk> {
   TextEditingController id = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController price = TextEditingController();
+  TextEditingController idKategori = TextEditingController();
   TextEditingController nmKategori = TextEditingController();
 
   String formatPrice(String value) {
@@ -33,6 +34,7 @@ class _DetailProdukState extends State<DetailProduk> {
     id.text = widget.listdata['id'];
     name.text = widget.listdata['name'];
     price.text = formatPrice(widget.listdata['price']);
+    idKategori.text = widget.listdata['idKategori'] ?? '-';
     nmKategori.text = widget.listdata['nmKategori'] ?? '-';
 
     return Scaffold(
@@ -78,7 +80,8 @@ class _DetailProdukState extends State<DetailProduk> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                  initialValue: nmKategori.text,
+                  initialValue:
+                      '${nmKategori.text} [id:${idKategori.text}]',
                   readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Kategori',
