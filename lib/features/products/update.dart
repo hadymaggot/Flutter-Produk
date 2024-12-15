@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -18,20 +19,24 @@ class _UbahProdukState extends State<UbahProduk> {
   TextEditingController id = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController price = TextEditingController();
+  TextEditingController idKategori = TextEditingController();
+
+  List<Map<String, dynamic>> _categories = [];
+  String? _selectedCategory;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
     id.text = widget.listdata['id'];
     name.text = widget.listdata['name'];
-    price.text =
-        _formatPrice(double.parse(widget.listdata['price'].toString()));
+    price.text = _formatPrice(double.parse(widget.listdata['price'].toString()));
+    idKategori.text = widget.listdata['idKategori'];
+    _fetchCategories();
   }
 
   String _formatPrice(double value) {
-    return NumberFormat.currency(
-            locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
-        .format(value);
+    return NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(value);
   }
 
   TextInputFormatter _currencyFormatter() {
@@ -55,6 +60,32 @@ class _UbahProdukState extends State<UbahProduk> {
     });
   }
 
+  Future<void> _fetchCategories() async {
+    try {
+      final response = await http.get(Uri.parse('${ApiConfig.baseUrl}categories/read.php'));
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _categories = List<Map<String, dynamic>>.from(data['data']);
+          if (_categories.isNotEmpty && widget.listdata['idKategori'] != null) {
+            _selectedCategory = widget.listdata['idKategori'];
+          }
+          _loading = false;
+        });
+      } else {
+        throw Exception('Failed to load categories');
+      }
+    } catch (e) {
+      setState(() {
+        _loading = false;
+      });
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching categories: $e')),
+      );
+    }
+  }
+
   Future<bool> _simpanData() async {
     final priceValue = price.text.replaceAll(RegExp(r'[^0-9]'), '');
 
@@ -64,6 +95,7 @@ class _UbahProdukState extends State<UbahProduk> {
         'id': id.text,
         'name': name.text,
         'price': priceValue,
+        'id_kategori': _selectedCategory!,
       },
     );
 
@@ -92,8 +124,7 @@ class _UbahProdukState extends State<UbahProduk> {
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Nama Produk Tidak Boleh Kosong!' : null,
+                validator: (value) => value!.isEmpty ? 'Nama Produk Tidak Boleh Kosong!' : null,
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -108,9 +139,32 @@ class _UbahProdukState extends State<UbahProduk> {
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
-                validator: (value) =>
-                    value!.isEmpty ? 'Harga Produk Tidak Boleh Kosong!' : null,
+                validator: (value) => value!.isEmpty ? 'Harga Produk Tidak Boleh Kosong!' : null,
               ),
+              const SizedBox(height: 20),
+              _loading
+                  ? const CircularProgressIndicator()
+                  : DropdownButtonFormField<String>(
+                      value: _selectedCategory,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _selectedCategory = newValue;
+                        });
+                      },
+                      items: _categories.map((category) {
+                        return DropdownMenuItem<String>(
+                          value: category['id'].toString(),
+                          child: Text(category['name']),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'Kategori Produk',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                      ),
+                      validator: (value) => value == null ? 'Kategori Produk Tidak Boleh Kosong!' : null,
+                    ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -121,12 +175,10 @@ class _UbahProdukState extends State<UbahProduk> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Data Berhasil Diubah')),
                         );
-
                         Navigator.pushAndRemoveUntil(
                           // ignore: use_build_context_synchronously
                           context,
-                          MaterialPageRoute(
-                              builder: ((context) => HalamanProduk())),
+                          MaterialPageRoute(builder: (context) => HalamanProduk()),
                           (route) => false,
                         );
                       } else {

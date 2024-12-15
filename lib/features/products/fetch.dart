@@ -156,6 +156,8 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                             'id': product['id'] ?? '-',
                                             'name': product['name'] ?? '-',
                                             'price': product['price'] ?? '-',
+                                            'idKategori':
+                                                product['id_kategori'] ?? '-',
                                             'nmKategori':
                                                 product['nm_kategori'] ?? '-',
                                             'image_urls':
@@ -240,6 +242,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                       'id': product['id'],
                                                       'name': product['name'],
                                                       'price': product['price'],
+                                                      'idKategori': product['id_kategori'],
                                                     },
                                                   ),
                                                 ),
