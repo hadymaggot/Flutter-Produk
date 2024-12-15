@@ -217,10 +217,10 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                               width: 1,
                                             ),
                                             borderRadius:
-                                                BorderRadius.circular(100),
+                                                BorderRadius.circular(5),
                                           ),
                                           child: Text(
-                                            product['id'] ?? '-',
+                                            product['nm_kategori'] ?? '-',
                                             style: const TextStyle(
                                               color: Colors.white,
                                             ),
