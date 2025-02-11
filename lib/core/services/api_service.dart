@@ -13,19 +13,23 @@ class ApiService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
 
-        if (kDebugMode) {
+        if (kDebugMode == true) {
+          // ignore: avoid_print
           print('Fetched data: $data');
         }
 
         return data;
       } else {
-        if (kDebugMode) {
+        if (kDebugMode == true) {
+          // ignore: avoid_print
           print('Failed to fetch data: ${response.statusCode}');
+          // ignore: avoid_print
           print('Error details: ${response.body}');
         }
       }
     } catch (e) {
-      if (kDebugMode) {
+      if (kDebugMode == true) {
+        // ignore: avoid_print
         print('Error: $e');
       }
     }

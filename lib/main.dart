@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:saptohadi/features/products/fetch.dart';
 
@@ -38,6 +36,7 @@ class _LoadingPageState extends State<LoadingPage> {
     await Future.delayed(const Duration(seconds: 3));
 
     Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(builder: (context) => const HalamanProduk()),
     );

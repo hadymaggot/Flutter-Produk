@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-class PullToRefreshWidget extends StatelessWidget {
+class PullToRefreshWidget extends StatefulWidget {
+
   final Future<void> Function() onRefresh;
   final Widget child;
 
@@ -11,10 +12,19 @@ class PullToRefreshWidget extends StatelessWidget {
   });
 
   @override
+  State<PullToRefreshWidget> createState() => _PullToRefreshWidgetState();
+}
+
+class _PullToRefreshWidgetState extends State<PullToRefreshWidget> {
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: child,
+      onRefresh: widget.onRefresh,
+      child: widget.child,
     );
+  }
+   @override
+  void dispose() {
+    super.dispose();
   }
 }

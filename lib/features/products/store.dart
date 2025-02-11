@@ -37,6 +37,13 @@ class _TambahProdukState extends State<TambahProduk> {
     _fetchCategories();
   }
 
+  @override
+  void dispose() {
+    _name.dispose();
+    _price.dispose();
+    super.dispose();
+  }
+
   Future<void> _fetchCategories() async {
     try {
       final response =
@@ -96,7 +103,8 @@ class _TambahProdukState extends State<TambahProduk> {
       if (response.statusCode == 200) {
         return true;
       } else {
-        if (kDebugMode) {
+        if (kDebugMode == true) {
+          // ignore: avoid_print
           print('Error uploading data: ${responseBody.body}');
         }
         throw Exception('Failed to submit data: ${responseBody.body}');

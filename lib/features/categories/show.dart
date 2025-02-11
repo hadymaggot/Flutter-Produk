@@ -9,10 +9,21 @@ class DetailKategori extends StatefulWidget {
 }
 
 class _DetailKategoriState extends State<DetailKategori> {
-  final formKey = GlobalKey<FormState>();
-  TextEditingController id = TextEditingController();
-  TextEditingController name = TextEditingController();
-  TextEditingController nmKategori = TextEditingController();
+  late TextEditingController id;
+  late TextEditingController name;
+  late TextEditingController nmKategori;
+
+  @override
+  void initState() {
+    super.initState();
+    id = TextEditingController();
+    name = TextEditingController();
+    nmKategori = TextEditingController();
+  }
+  @override
+  void dispose() {
+    id.dispose();name.dispose();nmKategori.dispose();super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -34,6 +34,15 @@ class _UbahProdukState extends State<UbahProduk> {
     idKategori.text = widget.listdata['idKategori'];
     _fetchCategories();
   }
+  @override
+  void dispose(){
+    super.dispose();
+    id.text = widget.listdata['id'];
+    name.text = widget.listdata['name'];
+    price.text = _formatPrice(double.parse(widget.listdata['price'].toString()));
+    idKategori.text = widget.listdata['idKategori'];
+    _fetchCategories();
+  }
 
   String _formatPrice(double value) {
     return NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0).format(value);

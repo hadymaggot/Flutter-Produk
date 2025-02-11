@@ -13,6 +13,13 @@ class TambahKategori extends StatefulWidget {
 class _TambahKategoriState extends State<TambahKategori> {
   final TextEditingController _name = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    super.dispose();
+  }
+
   bool _loading = false;
 
   Future<bool> _submitData() async {
@@ -35,7 +42,8 @@ class _TambahKategoriState extends State<TambahKategori> {
       if (response.statusCode == 200) {
         return true;
       } else {
-        if (kDebugMode) {
+        if (kDebugMode == true) {
+          // ignore: avoid_print
           print('Error: ${response.body}');
         }
         throw Exception('Gagal menyimpan data: ${response.body}');
@@ -71,7 +79,8 @@ class _TambahKategoriState extends State<TambahKategori> {
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
-                validator: (value) => value!.isEmpty ? 'Nama Kategori Tidak Boleh Kosong!' : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'Nama Kategori Tidak Boleh Kosong!' : null,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -88,11 +97,13 @@ class _TambahKategoriState extends State<TambahKategori> {
 
                     if (success) {
                       // ignore: use_build_context_synchronously
-                      Navigator.pop(context, true); // Indicate success to the Categories screen
+                      Navigator.pop(context,
+                          true); // Indicate success to the Categories screen
                     } else {
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Gagal Menyimpan Kategori')),
+                        const SnackBar(
+                            content: Text('Gagal Menyimpan Kategori')),
                       );
                     }
                   }

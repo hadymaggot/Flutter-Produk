@@ -23,6 +23,13 @@ class _UbahKategoriState extends State<UbahKategori> {
     name.text = widget.listdata['name'];
   }
 
+  @override
+  void dispose() {
+    id.dispose();
+    name.dispose();
+    super.dispose();
+  }
+
   Future<bool> _simpanData() async {
     final respon = await http.post(
       Uri.parse('${ApiConfig.baseUrl}categories/update.php'),

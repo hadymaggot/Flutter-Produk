@@ -10,12 +10,21 @@ class DetailProduk extends StatefulWidget {
 }
 
 class _DetailProdukState extends State<DetailProduk> {
-  final formKey = GlobalKey<FormState>();
-  TextEditingController id = TextEditingController();
-  TextEditingController name = TextEditingController();
-  TextEditingController price = TextEditingController();
-  TextEditingController idKategori = TextEditingController();
-  TextEditingController nmKategori = TextEditingController();
+  late final TextEditingController id;
+  late final TextEditingController name;
+  late final TextEditingController price;
+  late final TextEditingController idKategori;
+  late final TextEditingController nmKategori;
+
+  @override
+  void initState() {
+    super.initState();
+    id = TextEditingController();
+    name = TextEditingController();
+    price = TextEditingController();
+    idKategori = TextEditingController();
+    nmKategori = TextEditingController();
+  }
 
   String formatPrice(String value) {
     double priceValue = double.tryParse(value) ?? 0;
@@ -29,6 +38,15 @@ class _DetailProdukState extends State<DetailProduk> {
     }
   }
 
+  @override
+  void dispose() {
+    id.dispose();
+    name.dispose();
+    price.dispose();
+    idKategori.dispose();
+    nmKategori.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     id.text = widget.listdata['id'];

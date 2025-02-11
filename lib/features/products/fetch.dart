@@ -1,5 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
+import 'dart:io';
+import 'package:universal_io/io.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:pdf/widgets.dart' as pw;
+import 'package:flutter/foundation.dart'; // Untuk kIsWeb
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +30,8 @@ class _HalamanProdukState extends State<HalamanProduk> {
 
   final TextEditingController _filterController = TextEditingController();
 
+  Null get kDebugMode => null;
+
   Future<void> _fetch() async {
     try {
       final response =
@@ -44,6 +50,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
       setState(() {
         _loading = false;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch data: $e')),
       );
@@ -65,6 +72,7 @@ class _HalamanProdukState extends State<HalamanProduk> {
         return false;
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch data: $e')),
       );
@@ -89,7 +97,13 @@ class _HalamanProdukState extends State<HalamanProduk> {
     super.initState();
     _fetch();
     _filterController.addListener(() {
-      _filterList(_filterController.text);
+      try {
+        _filterList(_filterController.text);
+      } catch (e) {
+        // Tangani kesalahan di sini
+        // ignore: avoid_print
+        print("Error filtering list: $e");
+      }
     });
   }
 
@@ -97,6 +111,74 @@ class _HalamanProdukState extends State<HalamanProduk> {
   void dispose() {
     _filterController.dispose();
     super.dispose();
+  }
+
+  Future<void> generateReport() async {
+    try {
+      // Buat dokumen PDF
+      final pdf = pw.Document();
+
+      // Ambil tanggal saat ini
+      String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+      // Tambahkan halaman ke PDF
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.Column(children: [
+              pw.Text('Laporan Produk', style: pw.TextStyle(fontSize: 24)),
+              pw.SizedBox(height: 20),
+              // ignore: deprecated_member_use
+              pw.Table.fromTextArray(
+                headers: ['ID', 'Name', 'Price', 'Category'],
+                data: _filteredData.map((product) {
+                  return [
+                    product['id'],
+                    product['name'],
+                    NumberFormat.currency(
+                            locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0)
+                        .format(double.parse(product['price'].toString())),
+                    product['nm_kategori'],
+                  ];
+                }).toList(),
+              ),
+              // Menambahkan spasi agar tanggal berada di bawah
+              pw.Spacer(),
+              // Menambahkan tanggal cetak di kanan bawah
+              pw.Align(
+                alignment: pw.Alignment.bottomRight,
+                child: pw.Text('Tanggal Cetak: $formattedDate',
+                    style: pw.TextStyle(fontSize: 12)),
+              ),
+            ]);
+          },
+        ),
+      );
+
+      // Menyimpan PDF
+      if (kIsWeb) {
+        // Untuk web, kita bisa menggunakan Blob
+        final bytes = await pdf.save();
+        final blob = html.Blob([bytes]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        // ignore: unused_local_variable
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute('download', 'products_report.pdf')
+          ..click();
+        html.Url.revokeObjectUrl(url);
+      } else {
+        // Untuk mobile dan desktop
+        final directory = await getApplicationDocumentsDirectory();
+        final path = "${directory.path}/products_report.pdf";
+        final file = File(path);
+        await file.writeAsBytes(await pdf.save());
+        // ignore: avoid_print
+        print('PDF berhasil disimpan di $path');
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error: $e');
+    }
   }
 
   @override
@@ -110,7 +192,8 @@ class _HalamanProdukState extends State<HalamanProduk> {
             Text('Halaman Produk'),
           ],
         ),
-        backgroundColor: Colors.orange.withValues(alpha: 0.7),
+        // ignore: deprecated_member_use
+        backgroundColor: Colors.orange.withOpacity(0.7),
         foregroundColor: Colors.white,
         actions: [
           IconButton(
@@ -122,6 +205,12 @@ class _HalamanProdukState extends State<HalamanProduk> {
               ).then((_) {
                 _fetch(); // refresh data setelah berhasil input data
               });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download),
+            onPressed: () {
+              generateReport(); // Panggil fungsi untuk menghasilkan laporan PDF
             },
           ),
           const SizedBox(width: 8),
@@ -171,19 +260,20 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                   }
                                 },
                                 child: ListTile(
-                                  leading:
-                                      product['image_urls']?.isNotEmpty == true
-                                          ? Image.network(
-                                              product['image_urls'],
-                                              height: 40,
-                                              width: 70,
-                                            )
-                                          : Icon(
-                                              Icons.nearby_error_sharp,
-                                              size: 40,
-                                              color: Colors.blueGrey
-                                                  .withValues(alpha: 0.3),
-                                            ),
+                                  leading: product['image_urls']?.isNotEmpty ==
+                                          true
+                                      ? Image.network(
+                                          product['image_urls'],
+                                          height: 40,
+                                          width: 70,
+                                        )
+                                      : Icon(
+                                          Icons.nearby_error_sharp,
+                                          size: 40,
+                                          color:
+                                              // ignore: deprecated_member_use
+                                              Colors.blueGrey.withOpacity(0.3),
+                                        ),
                                   title: Text(product['name'] ?? '-'),
                                   subtitle: Text(
                                     product['price'] != null
@@ -203,12 +293,14 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
-                                            color: Colors.orange
-                                                .withValues(alpha: 0.7),
+                                            color:
+                                                // ignore: deprecated_member_use
+                                                Colors.orange.withOpacity(0.7),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: Colors.grey
-                                                    .withValues(alpha: 0.2),
+                                                    // ignore: deprecated_member_use
+                                                    .withOpacity(0.2),
                                                 spreadRadius: 2,
                                                 blurRadius: 5,
                                                 offset: const Offset(0, 1),
@@ -242,7 +334,8 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                       'id': product['id'],
                                                       'name': product['name'],
                                                       'price': product['price'],
-                                                      'idKategori': product['id_kategori'],
+                                                      'idKategori': product[
+                                                          'id_kategori'],
                                                     },
                                                   ),
                                                 ),
@@ -262,12 +355,14 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                           _delete(product['id'])
                                                               .then((value) {
                                                             Navigator.pop(
+                                                                // ignore: use_build_context_synchronously
                                                                 context);
                                                             setState(() {
                                                               _fetch();
                                                             });
 
                                                             ScaffoldMessenger
+                                                                    // ignore: use_build_context_synchronously
                                                                     .of(context)
                                                                 .showSnackBar(
                                                               SnackBar(
@@ -280,9 +375,11 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                           }).catchError(
                                                                   (error) {
                                                             Navigator.pop(
+                                                                // ignore: use_build_context_synchronously
                                                                 context);
 
                                                             ScaffoldMessenger
+                                                                    // ignore: use_build_context_synchronously
                                                                     .of(context)
                                                                 .showSnackBar(
                                                               SnackBar(
@@ -296,11 +393,11 @@ class _HalamanProdukState extends State<HalamanProduk> {
                                                         },
                                                         style: ElevatedButton
                                                             .styleFrom(
-                                                          backgroundColor:
-                                                              Colors.orange
-                                                                  .withValues(
-                                                                      alpha:
-                                                                          0.7),
+                                                          backgroundColor: Colors
+                                                              .orange
+                                                              // ignore: deprecated_member_use
+                                                              // ignore: deprecated_member_use
+                                                              .withOpacity(0.7),
                                                           foregroundColor:
                                                               Colors.white,
                                                           textStyle:
